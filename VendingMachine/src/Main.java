@@ -3,9 +3,9 @@
 public class Main {
     public static void main(String[] args){
 
-        VendingMachine vendingMachine = new VendingMachine();
+        VMInteraction vminteraction = new VMInteraction();
 
-        vendingMachine.interactionStart();
+        vminteraction.start();
 
         }
     }

@@ -1,10 +1,16 @@
 package Customer;
 
-public class VMCustomer extends VendingMachine implements VMCustomerAPI {
+
+import VMParent.VM;
+
+public class VMCustomer extends VM implements VMCustomerAPI {
+
+    private double currentBalance = 0; //Total amount deposited in current interaction
 
     @Override
     public void printMenu() {
-         for (var instruction : mainMenuOptions.values()) {
+        System.out.println("Welcome, please choose one of the following (type the number):");
+        for (var instruction : CustomerMainMenu.values()) {
             System.out.println(instruction.getInstruction());
         }
     }
@@ -12,41 +18,44 @@ public class VMCustomer extends VendingMachine implements VMCustomerAPI {
     @Override
     public void printAcceptedCoins() {
         System.out.println("Please insert one of the following coins:");
-        for (var coin : acceptedCoins.values()) {
+        for (var coin : AcceptedCoins.values()) {
             System.out.println(coin.getCoin());
         }
     }
 
     @Override
-    public String validateCoinInput() {
-        return "";
-    }
+    public boolean isValidCoin (String coinInput) {
 
-    @Override
-    public String validateCoinInput(String coinInput) {
+        for (AcceptedCoins coin : AcceptedCoins.values()) {
+            if (coin.getCoin().equals(coinInput)){
+                return true;
 
-        if(acceptedCoins.values().equals(coinInput)) {
-            return "Deposit successful.";
+            }
+
         }
-        else {
-            return "Invalid coin. Find coin in collection tray.";
-        }
+
+        return false;
     }
 
     @Override
-
-
-
-    @Override
-    public void insertCoin(Coin coin) {
-
+    public void insertCoin(String coin) {
+        this.currentBalance = this.currentBalance + Long.parseLong(coin);
+        System.out.println("Current balance: " + getCurrentBalance());
 
     }
 
     @Override
-    public int getCurrentBalance() {
-        return 0;
+    public double getCurrentBalance() {
+        return currentBalance;
     }
+
+    @Override
+    public void setCurrentBalance(double currentBalance) {
+        this.currentBalance = currentBalance;
+    }
+}
+
+     /*
 
     @Override
     public void selectItem(String code) throws PurchaseException {
@@ -78,4 +87,6 @@ public class VMCustomer extends VendingMachine implements VMCustomerAPI {
 
     }
 }
+*/
+
 

@@ -1,8 +1,6 @@
+
 package Customer;
 
-/**
- * API for customer interacting with the vending machine
- */
 
 public interface VMCustomerAPI {
 
@@ -13,12 +11,19 @@ public interface VMCustomerAPI {
     void printAcceptedCoins();
 
     //Validate coin input
-    String validateCoinInput();
+    boolean isValidCoin (String coinInput);
 
     // Customer inserts a coin
-    void insertCoin(Coin coin);
+    void insertCoin(String coin);
     // Returns current balance of inserted coins
-    int getCurrentBalance();
+
+
+
+    double getCurrentBalance();
+
+    void setCurrentBalance(double balance);
+
+    /*
 
     // Customer selects item
     // throws exception if not found
@@ -35,5 +40,7 @@ public interface VMCustomerAPI {
     // Customer collects refund, or item and change, from return bucket
     // Update states of the vending machine and return bucket
     void collect();
+
+     */
 
 }
