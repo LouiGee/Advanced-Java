@@ -2,6 +2,10 @@
 package Customer;
 
 
+import VendingMachine.VMItem;
+
+import java.util.ArrayList;
+
 public interface VMCustomerAPI {
 
     // Print menu to customer
@@ -17,11 +21,21 @@ public interface VMCustomerAPI {
     void insertCoin(String coin);
     // Returns current balance of inserted coins
 
-
-
     double getCurrentBalance();
 
     void setCurrentBalance(double balance);
+
+    void purchaseItem();
+
+    void refundBalance();
+
+    void coinInput();
+
+    void collectRefund();
+
+    void collectItem();
+
+    void updateItemQuantity(ArrayList<VMItem> items, String itemCode, int newQuantity);
 
     /*
 

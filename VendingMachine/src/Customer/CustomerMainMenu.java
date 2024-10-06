@@ -2,11 +2,11 @@ package Customer;
 
 public enum CustomerMainMenu {
     INSERT_COIN("1.Insert coins"),
-    VIEW_ITEMS("2.View items available for purchase"),
+    VIEW_ITEMS("2.View items"),
     CURRENT_BALANCE("3.View current balance"),
-    SELECT_ITEM("4.Select item"),
-    PURCHASE_ITEM("5.Purchase item"),
-    REQUEST_REFUND("6.Request refund"),
+    PURCHASE_ITEM("4.Purchase item"),
+    REQUEST_REFUND("5.Request refund"),
+    COLLECT_REFUND("6.Collect refund"),
     COLLECT_ITEM("7.Collect item"),
     EXIT("8.Exit");
 
