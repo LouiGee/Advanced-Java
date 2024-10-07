@@ -6,5 +6,5 @@ A2 (50%): deadline on Wednesday in Week 11 (KV 18)
 
 ## Target hours revision 
 **Target**: 150 \
-**Current**: 31.5\
+**Current**: 34\
 **Hours per day needed**: ?
