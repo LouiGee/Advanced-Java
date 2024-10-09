@@ -16,15 +16,20 @@ public class Interaction {
 
     public void start() {
 
-        //Create an instance of the vending machine
-        VendingMachine vm = new VendingMachine();
+        //Maximum capacity of vending machine
+        System.out.println("What is the capacity of the vending machine?");
+        Scanner capacityReader = new Scanner(System.in);
+        String vmCapacity = capacityReader.nextLine();
 
-        //Create instance of login state
-        LoginState loginState = new LoginState();
+        //Create an instance of the vending machine
+        VendingMachine vm = new VendingMachine(vmCapacity);
 
         //Load preloaded items and coins into vending machine
         vm.initialiseItems();
         vm.initialiseCoins();
+
+        //Create instance of login state
+        LoginState loginState = new LoginState(vmCapacity);
 
         //Welcome message
         System.out.println("Hello! I am " + vm.getVendingMachineName() + " the vending machine.");
@@ -52,7 +57,7 @@ public class Interaction {
             if (user.equalsIgnoreCase("customer")) {
 
                 // Initialise customer interface class with bespoke methods for a customer
-                CustomerState CustomerState = new CustomerState();
+                CustomerState CustomerState = new CustomerState(vmCapacity);
 
                 boolean returnToLogin = false;
                 while (!returnToLogin) {
@@ -69,7 +74,17 @@ public class Interaction {
 
                         case "1":
 
-                            CustomerState.coinInput();
+                            //Loading
+                            LoadingBuffer.loading();
+
+                            //Print out list of accepted coins
+                            CustomerState.printAcceptedCoins();
+
+                            //Receive input
+                            Scanner readerInsertCoin = new Scanner(System.in);
+                            String coinInput = readerInsertCoin.nextLine();
+
+                            CustomerState.depositCoin(coinInput);
 
                             break;
 
@@ -86,9 +101,17 @@ public class Interaction {
 
                         case "4":
 
+                            //Loading
+                            LoadingBuffer.loading();
+
+                            //Ask for item code
+                            System.out.println("Please select an item code e.g. '03'");
+                            Scanner readerItemInput = new Scanner(System.in);
+                            String itemPurchaseCodeInput = readerItemInput.nextLine();
+
                             try {
-                                CustomerState.purchaseItem();
-                            } catch (InsufficentChangeException | NotInStockException | InsufficientFundsException e) {System.err.println(e.getMessage());}
+                                CustomerState.purchaseItem(itemPurchaseCodeInput);
+                            } catch (InsufficientChangeException | NotInStockException | InsufficientFundsException e) {System.err.println(e.getMessage());}
                             break;
 
                         case "5":
@@ -129,7 +152,7 @@ public class Interaction {
             } else if (user.equalsIgnoreCase("administrator")) {
 
                 // Initialise administrator interface class with bespoke methods for a administrator
-                AdminState AdminState = new AdminState();
+                AdminState AdminState = new AdminState(vmCapacity);
 
                 boolean returnToLogin = false;
                 while (!returnToLogin) {
@@ -158,7 +181,7 @@ public class Interaction {
 
                             try {
                             AdminState.depositMoney(depositInput); }
-                            catch (Exception e) {System.err.println(e.getMessage());}
+                            catch (InvalidInputException e) {System.err.println(e.getMessage());}
                             break;
 
                         case "3":
@@ -168,15 +191,37 @@ public class Interaction {
 
                         case "4":
 
+                            // Gather user input
+                            Scanner readerAddItem;
+                            readerAddItem = new Scanner(System.in);
+
+                            System.out.println("Enter code: ");
+                            String codeInput = readerAddItem.nextLine();
+                            LoadingBuffer.loading();
+                            System.out.println("Enter name: ");
+                            String nameInput = readerAddItem.nextLine();
+                            LoadingBuffer.loading();
+                            System.out.println("Enter price: ");
+                            String priceInput = readerAddItem.nextLine();
+                            LoadingBuffer.loading();
+                            System.out.println("Enter quantity: ");
+                            String quantityInput = readerAddItem.nextLine();
+
+
                             try {
-                                AdminState.addItem();
+                                AdminState.addItem(codeInput, nameInput, priceInput, quantityInput);
                             } catch (CapacityFullException | DuplicateEntryException c) {System.err.println(c.getMessage());}
                             break;
 
 
                         case "5":
 
-                            AdminState.removeItem();
+                            //User input
+                            Scanner readerRemoveItem = new Scanner(System.in);
+                            System.out.println("Enter item code: ");
+                            String removeItemCodeInput = readerRemoveItem.nextLine();
+
+                            AdminState.removeItem(removeItemCodeInput);
                             break;
 
                         case "6":

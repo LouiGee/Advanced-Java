@@ -3,87 +3,140 @@
 package Tests;
 
 import AdminState.AdminState;
-import LoadingMessage.LoadingBuffer;
-import org.junit.Assert;
+import Exceptions.CapacityFullException;
+import Exceptions.DuplicateEntryException;
+import Exceptions.InvalidInputException;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertThrows;
 
 public class AdminTests {
 
-    /*
-    AdminState vmAdmin = new AdminState();
 
-    public void state() {
-        vmAdmin.initialiseItems();
-        System.out.println("Vending machine starting state: \n");
-        vmAdmin.viewInventory();
-        System.out.println("\nStored money: £" + vmAdmin.getTotalStoredMoney());
-        System.out.println("Current balance: £" + vmAdmin.getCurrentBalance());
-        System.out.println("Money in refund tray: £" + vmAdmin.getReturnBucket());
-        System.out.println("Item in tray: " + vmAdmin.isItemInTray());
+    private static final int MAX_ITEMS = 5;
+    AdminState vmAdmin = new AdminState("5");
 
-    }
-
-    @Test
-    public void testLoginAdministrator() {
-        System.out.println("\n\nTest1 (Admin). User has typed 'administrator' at login and entered the correct password 'password'.");
-        System.out.println("Are you a 'customer' or an 'administrator'? Type 'exit' at anytime to stop interaction.");
-        System.out.println("Please enter your administrator password:");
-        String result = vmAdmin.login("administrator","password");
-        Assert.assertEquals("administrator", result);
-        System.out.println("Test Complete.");
-
-    }
-
-    @Test
-    public void testLoginAdministratorIncorrect() {
-        System.out.println("\n\nTest2a (Admin). User has typed 'administrator' and entered the incorrect password 'incorrectpassword' 3 times.");
-        System.out.println("Are you a 'customer' or an 'administrator'? Type 'exit' at anytime to stop interaction.");
-        LoadingBuffer.loading();
-        System.out.println("Please enter your administrator password:");
-        vmAdmin.login("administrator","incorrectpassword");
-        System.out.println(" \n Test2b (Admin).The Admin Account is now locked to prevent bruteforce attempts. Attempting again provides the follwing message: ");
-        vmAdmin.login("administrator","incorrectpassword");
-        System.out.println("Test Complete.");
-    }
-
-    @Test
-    public void testLoginUserIncorrect() {
-        System.out.println("\n\nTest3 (Admin). User has typed 'notauser' at the login page");
-        System.out.println("Are you a 'customer' or an 'administrator'? Type 'exit' at anytime to stop interaction.");
-        vmAdmin.login("notauser");
-        System.out.println("Test Complete.");
-    }
-
-    @Test
-    public void testLoginExit() {
-        System.out.println("\n\nTest4 (Admin). User has typed 'exit' at the login page");
-        System.out.println("Are you a 'customer' or an 'administrator'? Type 'exit' at anytime to stop interaction.");
-        String result = vmAdmin.login("exit");
-        Assert.assertEquals("exit", result);
-        System.out.println("Test Complete.");
-    }
-
+    //Test 1
     @Test
     public void testPrintMenu() {
-        System.out.println("\n\nTest5 (Admin). Print admin main menu.");
+        System.out.println("\n\nTest1 (Admin). Print admin main menu.");
         vmAdmin.printMenu();
-        System.out.println("Test Complete.");
+        System.out.println("Test complete.");
     }
 
+    //Test 2
     @Test
-    public void testCollectMoney() {
-        System.out.println("\n\nTest6 (Admin). Collect Stored Money.");
-        vmAdmin.collectMoney();
-        System.out.println("Test Complete.");
-
+    public void testWithdrawMoney() {
+        System.out.println("\n\nTest2 (Admin). Withdraw stored money.");
+        vmAdmin.withdrawMoney();
+        System.out.println("Test complete.");
     }
 
-
-
-
+    //Test 3
     @Test
-    public void testStockItem() {
-        vmAdmin.addItem();
+    public void testDepositMoney() throws InvalidInputException {
+        System.out.println("\n\nTest3 (Admin). Deposit  money.");
+        vmAdmin.depositMoney("0.50");
+        System.out.println("Test passed.");
     }
-*/
+
+    //Test 4
+    @Test
+    public void testDepositMoneyIncorrect() {
+        System.out.println("\n\nTest4 (Admin). Deposit unsupported money input with exception thrown.");
+        Exception exception = assertThrows(
+                InvalidInputException.class,
+                () -> vmAdmin.depositMoney("0.30")
+        );
+        Assertions.assertEquals("Invalid input.", exception.getMessage());
+        System.out.println("Invalid input exception thrown.");
+        System.out.println("Test passed.");
+
+    }
+
+    //Test 5
+    @Test
+    public void testViewItems() {
+        System.out.println("\n\nTest5 (Admin). View items.");
+        vmAdmin.initialiseItems();
+        vmAdmin.viewInventory();
+        System.out.println("Test complete.");
+    }
+
+    //Test 6
+    @Test
+    public void testAddItem() throws CapacityFullException, DuplicateEntryException {
+        System.out.println("\n\nTest6 (Admin). Add item.");
+        vmAdmin.setItems( new ArrayList<>(MAX_ITEMS - 1 ));
+        vmAdmin.initialiseItems();
+        vmAdmin.addItem("05", "Sprite 500ml", "1.40", "10");
+        vmAdmin.viewInventory();
+        System.out.println("Test complete.");
+        vmAdmin.setItems( new ArrayList<>(MAX_ITEMS - 1 )); //reset items array
+    }
+
+    //Test 7
+    @Test
+    public void testAddItemDuplicateEntry() throws CapacityFullException, DuplicateEntryException {
+        System.out.println("\n\nTest7 (Admin). Add item with duplicate code '03' .");
+        vmAdmin.initialiseItems();
+        Exception exception = assertThrows(
+                DuplicateEntryException.class,
+                () -> vmAdmin.addItem("03", "Sprite 500ml", "1.40", "10")
+        );
+        Assertions.assertEquals("Either code or name is already taken.", exception.getMessage());
+        System.out.println("Duplicate entry exception thrown.");
+        System.out.println("Test passed.");
+        vmAdmin.setItems( new ArrayList<>(MAX_ITEMS - 1 )); //reset items array
+
+    }
+
+    //Test 8
+    @Test
+    public void testAddItemCapacityFull() throws CapacityFullException, DuplicateEntryException {
+        System.out.println("\n\nTest8 (Admin). Initialise four items and then add two items to cause a CapacityFullException.");
+        vmAdmin.initialiseItems(); //Creates 4 items and Limit is 5
+        vmAdmin.viewInventory();
+        vmAdmin.addItem("05", "Sprite 330ml", "1.0", "10");
+        vmAdmin.viewInventory();
+        Exception exception = assertThrows(
+                CapacityFullException.class,
+                () -> vmAdmin.addItem("06", "Sprite 500ml", "1.40", "6")
+        );
+        Assertions.assertEquals("The vending machine is full. You must remove an item before you can add another.", exception.getMessage());
+        System.out.println("CapacityFullException exception thrown.");
+        System.out.println("Test passed.");
+
+    }
+
+    //Test 9
+    @Test
+    public void testRemoveItem() {
+        System.out.println("\n\nTest 9 (Admin). Remove a item with code 01.");
+        vmAdmin.viewInventory();
+        vmAdmin.removeItem("01");
+        vmAdmin.viewInventory();
+        System.out.println("Test complete.");
+
+    }
+
+    //Test 10
+    @Test
+    public void testReturnToLogin() {
+        System.out.println("\n\nTest 10 (Admin). Return to the login page.");
+        vmAdmin.removeItem("01");
+        System.out.println("Test complete.");
+
+    }
+
+
+
+
+
+
+
+
 }

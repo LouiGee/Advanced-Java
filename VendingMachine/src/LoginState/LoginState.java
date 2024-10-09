@@ -5,11 +5,16 @@ import VendingMachine.VendingMachine;
 
 public class LoginState extends VendingMachine implements LoginStateAPI {
 
-    // Login workflow
+    public LoginState(String maxItems) {
+        super(maxItems);
+    }
+
+    // OVERLOADED METHOD
     public String login(String userInput, String adminPasswordInput) {
 
         boolean validInput = false;
 
+        // if input is valid control flow will either be 'customer' or 'administrator'
         while (!validInput) {
 
             if (userInput.equalsIgnoreCase("customer")) {
@@ -18,11 +23,15 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
 
                 validInput = true;
 
+                System.out.println("Login successful.");
+
                 return "customer";
             } else if (userInput.equalsIgnoreCase("administrator")) {
 
+                //Loading
                 LoadingBuffer.loading();
 
+                // Item locked after 3 password attempts
                 if (isLockedAdminAccount()) {
 
                     System.out.println("Admin account is locked. Please contact support.");
@@ -35,12 +44,17 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
                     validInput = administratorAuthentication(adminPasswordInput);
                 }
 
+                //if authentication successful print message otherwise repeat authentication loop
                 if (validInput) {
+
+                    System.out.println("Login successful.");
                     return "administrator";
+
                 } else {
                     return "Null";
                 }
 
+                // input is exit then exit program
             } else if (userInput.equalsIgnoreCase("exit")) {
 
                 validInput = true;
@@ -48,9 +62,10 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
 
             } else {
 
+                //Loading
                 LoadingBuffer.loading();
 
-                System.out.println("Oh no! Incorrect input... please try again");
+                System.out.println("Oh no! Incorrect input... please try again.");
 
                 validInput = true;
 
@@ -61,18 +76,24 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
         return "Program terminated.";
     }
 
-    // Login workflow
+    // OVERLOADED METHOD
     public String login(String userInput) {
 
         boolean validInput = false;
 
+
         while (!validInput) {
 
+            // if input is valid control flow will either be 'customer' or 'administrator'
             if (userInput.equalsIgnoreCase("customer")) {
 
+                //Loading
                 LoadingBuffer.loading();
 
                 validInput = true;
+
+                //Confirmation message
+                System.out.println("Login successful.");
 
                 return "customer";
             } else if (userInput.equalsIgnoreCase("administrator")) {
@@ -91,13 +112,17 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
             } else if (userInput.equalsIgnoreCase("exit")) {
 
                 validInput = true;
+
+                System.out.println("Goodbye, see you soon!");
                 return "exit";
 
             } else {
 
+                //Loading
                 LoadingBuffer.loading();
 
-                System.out.println("Oh no! Incorrect input... please try again");
+                //Could be an exception
+                System.out.println("Oh no! Incorrect input... please try again.");
 
                 validInput = true;
             }
@@ -111,6 +136,7 @@ public class LoginState extends VendingMachine implements LoginStateAPI {
     // Method used in login() to authenticate admin
     public boolean administratorAuthentication(String adminPasswordInput) {
 
+        //Initialise variables
         String adminPassword = "password";
         boolean validPassword = false;
         boolean return_value = true;

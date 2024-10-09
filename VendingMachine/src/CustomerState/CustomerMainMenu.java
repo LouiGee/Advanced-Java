@@ -1,5 +1,5 @@
 package CustomerState;
-
+// Customer main menu options
 public enum CustomerMainMenu {
     INSERT_COIN("1.Insert coins"),
     VIEW_ITEMS("2.View items"),

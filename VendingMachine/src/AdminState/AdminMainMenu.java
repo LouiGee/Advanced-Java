@@ -1,5 +1,6 @@
 package AdminState;
 
+// Admin menu options
 public enum AdminMainMenu {
     WITHDRAW_MONEY("1.Withdraw money"),
     DEPOSIT_MONEY("2.Deposit money"),

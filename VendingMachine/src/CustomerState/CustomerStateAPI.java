@@ -2,10 +2,10 @@
 package CustomerState;
 
 
-import Exceptions.InsufficentChangeException;
+import Exceptions.InsufficientChangeException;
 import Exceptions.InsufficientFundsException;
 import Exceptions.NotInStockException;
-import Item.VendingMachineItem;
+import Item.Item;
 
 import java.util.ArrayList;
 
@@ -17,43 +17,25 @@ public interface CustomerStateAPI {
     // Print out list of accepted coins
     void printAcceptedCoins();
 
-    //Validate coin input
+    //Used as a helper method in purchaseItem()
     boolean isValidCoin (String coinInput);
 
-    // Customer inserts a coin
-    void insertCoin(String coin);
-    // Returns current balance of inserted coins
+    //Handles purchases
+    void purchaseItem(String codeInput) throws NotInStockException, InsufficientFundsException, InsufficientChangeException;
 
-    void purchaseItem() throws NotInStockException, InsufficientFundsException, InsufficentChangeException;
-
+    //Will refund balance at any point
     void refundBalance();
 
-    void coinInput();
+    //Handles coin deposits
+    void depositCoin(String coinInput);
 
+    //Collect refund if coins in tray
     void collectRefund();
 
+    //Collect deposited item from tray
     void collectItem();
 
-    void updateItemQuantity(ArrayList<VendingMachineItem> items, String itemCode, int newQuantity);
-
-    /*
-
-    // Customer selects item
-    // throws exception if not found
-    void selectItem(String code) throws PurchaseException;
-    // Returns currently selected item’s code
-    String getItemCode();
-    // Customer requests a refund, coins to be placed in return bucket
-    void requestRefund();
-    // Customer requests purchasing selected item
-    // throws exception on error, puts item in return bucket
-    public void requestPurchaseItem() throws PurchaseException;
-    // Customer requests change, coins to be placed in return bucket
-    void requestChange();
-    // Customer collects refund, or item and change, from return bucket
-    // Update states of the vending machine and return bucket
-    void collect();
-
-     */
+    // helper method used in purchaseItem()
+    void updateItemQuantity(ArrayList<Item> items, String itemCode, int newQuantity);
 
 }

@@ -1,7 +1,6 @@
 package VendingMachine;
 
-import Item.VendingMachineItem;
-import LoadingMessage.LoadingBuffer;
+import Item.Item;
 import Coins.*;
 
 import java.util.ArrayList;
@@ -19,16 +18,19 @@ public class VendingMachine implements VendingMachineAPI {
     protected static ArrayList<Coin100p> stored100pCoins = new ArrayList<>(50);
     protected static ArrayList<Coin200p> stored200pCoins = new ArrayList<>(50);
     protected static double totalStoredMoney = 15.70; //Total money in the vending machine to start
-    protected boolean itemInTray = false; //Turns true when item is purchased
-    protected String itemInTrayName = "";
-    protected static final int MAX_ITEMS = 5;
-    protected static ArrayList<VendingMachineItem> items = new ArrayList<>(MAX_ITEMS - 1 ); //-1 as array indexed at 0
+    protected static boolean itemInTray = false; //Turns true when item is purchased
+    protected static String itemInTrayName = "";
+    protected final int MAX_ITEMS;
+    protected static ArrayList<Item> items; //-1 as array indexed at 0
     protected static boolean lockedAdminAccount = false; //Turns true when max login attempts reached
     protected String vendingMachineName = "Victor";
 
+    public VendingMachine(String maxItems) {
+        this.MAX_ITEMS = Integer.parseInt(maxItems);
+    }
 
     // Initialise coins stored in vending machine
-    public static void initialiseCoins()
+    public void initialiseCoins()
     {
         for (int i = 1; i <= 10; i++)
             stored1pCoins.add(new Coin1p());
@@ -60,16 +62,16 @@ public class VendingMachine implements VendingMachineAPI {
     // Initialise items in vending machine
     public void initialiseItems()
     {
-        items.add(new VendingMachineItem("01", "Coke 500ml", 1.40, 10));
-        items.add(new VendingMachineItem("02", "Coke 330ml", 1, 0));
-        items.add(new VendingMachineItem("03", "Fanta 330ml", 1, 5));
-        items.add(new VendingMachineItem("04", "Fanta 500ml", 1.40, 4));
-        //items.add(new VMItem(5, "Sprite 500ml", 1.40, 10));
+        items = new ArrayList<>(MAX_ITEMS - 1);
+        items.add(new Item("01", "Coke 500ml", 1.40, 10));
+        items.add(new Item("02", "Coke 330ml", 1, 0));
+        items.add(new Item("03", "Fanta 330ml", 1, 5));
+        items.add(new Item("04", "Fanta 500ml", 1.40, 4));
     }
 
     // Used to view inventory
     public void viewInventory() {
-        for (VendingMachineItem item : items) {
+        for (Item item : items) {
             System.out.println( "Code: " + item.getCode() + " Item: " + item.getName() + " Price: " + item.getPrice() + " Quantity: " + item.getQuantity());
         }
 
@@ -140,10 +142,6 @@ public class VendingMachine implements VendingMachineAPI {
         VendingMachine.stored200pCoins = stored200pCoins;
     }
 
-    public void setTotalStoredMoney(double totalStoredMoney) {
-        this.totalStoredMoney = totalStoredMoney;
-    }
-
     public double getTotalStoredMoney() {
         return totalStoredMoney;
     }
@@ -151,38 +149,38 @@ public class VendingMachine implements VendingMachineAPI {
 
     public void setTotalStoredMoney() {
 
-        this.totalStoredMoney = 0.0;
+        totalStoredMoney = 0.0;
 
         for (Coin1p coin : stored1pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin2p coin : stored2pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin5p coin : stored5pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin10p coin : stored10pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin20p coin : stored20pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin50p coin : stored50pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin100p coin : stored100pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
         for (Coin200p coin : stored200pCoins) {
-            this.totalStoredMoney = getTotalStoredMoney() + coin.getValue();
+            totalStoredMoney = getTotalStoredMoney() + coin.getValue();
         }
 
     }
@@ -217,11 +215,11 @@ public class VendingMachine implements VendingMachineAPI {
 
 
 
-    public ArrayList<VendingMachineItem> getItems() {
+    public ArrayList<Item> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<VendingMachineItem> items) {
+    public void setItems(ArrayList<Item> items) {
         VendingMachine.items = items;
     }
 
@@ -233,7 +231,11 @@ public class VendingMachine implements VendingMachineAPI {
         this.itemInTrayName = itemInTrayName;
     }
 
-    public double getCurrentBalance() {
+    public ArrayList<Coin> getCurrentBalance() {
+        return currentBalance;
+    }
+
+    public double getCurrentBalanceNumber() {
         double currentBalanceNumber = 0.0;
         for (Coin coin : currentBalance) {
             currentBalanceNumber = currentBalanceNumber + coin.getValue();
@@ -252,4 +254,12 @@ public class VendingMachine implements VendingMachineAPI {
     public void setVendingMachineName(String vendingMachineName) {
         this.vendingMachineName = vendingMachineName;
     }
+
+    public int getMAX_ITEMS() {
+        return MAX_ITEMS;
+    }
+
+
+
+
 }

@@ -2,6 +2,7 @@ package LoadingMessage;
 
 public class LoadingBuffer {
 
+    //used to provide natural break in between actions
     public static void loading(){
         System.out.println("Loading...");
         try {

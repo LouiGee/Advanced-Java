@@ -1,39 +1,37 @@
 package CustomerState;
 import Coins.*;
-import Exceptions.InsufficentChangeException;
+import Exceptions.InsufficientChangeException;
 import Exceptions.InsufficientFundsException;
 import Exceptions.NotInStockException;
-import Item.VendingMachineItem;
+import Item.Item;
 import LoadingMessage.LoadingBuffer;
 import VendingMachine.VendingMachine;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class CustomerState extends VendingMachine implements CustomerStateAPI {
 
+
+    public CustomerState(String maxItems) {
+        super(maxItems);
+    }
+
     @Override
-    public void purchaseItem() throws NotInStockException, InsufficientFundsException, InsufficentChangeException {
+    public void purchaseItem( String codeInput) throws NotInStockException, InsufficientFundsException, InsufficientChangeException {
 
         //Loading
         LoadingBuffer.loading();
 
-        //Ask for item code
-        System.out.println("Please select an item code e.g. '03'");
-        Scanner readerItemInput = new Scanner(System.in);
-        String codeInput = readerItemInput.nextLine();
-
-        //Loading
-        LoadingBuffer.loading();
-
-        //Control statement to handle purchase
+        //Initialise variables
         boolean itemFound = false;
         String itemName = "";
         double itemPrice = 0.0;
         int itemQuantity = 0;
 
-        for (VendingMachineItem item : items) {
+
+        // Validate input and that item is stocked in vending machine
+        for (Item item : items) {
             if (Objects.equals(codeInput, item.getCode())) {
                 itemName = item.getName();
                 itemPrice = item.getPrice();
@@ -42,67 +40,73 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
             }
         }
 
-        System.out.println(itemName + " has been deposited in collection tray.");
-        //Deposit change in return bucket (change allocation algorithm)
+        //Calculate change due
+        double changeDue = getCurrentBalanceNumber() - itemPrice;
 
-        double changeDue = getCurrentBalance() - itemPrice;
+        //If not enough change coins in machine throw InsufficientChangeException
+        if (getTotalStoredMoney() < changeDue) {
 
-        while (changeDue > 0) {
+            //Refund deposited
+            setReturnBucket(getCurrentBalance());
 
-            if (changeDue >= 2.0 && !stored200pCoins.isEmpty()) {
-                returnBucket.add(stored200pCoins.getFirst());
-                changeDue = changeDue - 2.0;
-                System.out.println("£2.00 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 1.0 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 1.0;
-                System.out.println("£1.00 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.5 && !stored50pCoins.isEmpty()) {
-                returnBucket.add(stored50pCoins.getFirst());
-                changeDue = changeDue - 0.5;
-                System.out.println("£0.50 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.2 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.2;
-                System.out.println("£0.20 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.1 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.1;
-                System.out.println("£0.10 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.05 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.05;
-                System.out.println("£0.05 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.02 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.02;
-                System.out.println("£0.02 coin deposited in refund tray.");
-            }
-            else if (changeDue >= 0.01 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.01;
-                System.out.println("£0.01 coin deposited in refund tray.");
-            }
+            //Refresh current balance
+            setCurrentBalance(new ArrayList<>());
 
-            else if (getTotalStoredMoney() < changeDue) {
-                throw new InsufficentChangeException("Insufficient change. Contact admin.");
+            throw new InsufficientChangeException("Insufficient change. Current balance refunded. Contact admin.");
+
+        //Else allocate change (Change allocation algorithm)
+        } else {
+            // While change is outstanding
+            while (changeDue > 0) {
+
+                if (changeDue >= 2.0 && !stored200pCoins.isEmpty()) {
+                    returnBucket.add(stored200pCoins.getFirst());
+                    changeDue = changeDue - 2.0;
+                    System.out.println("£2.00 coin deposited in refund tray.");
+                } else if (changeDue >= 1.0 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 1.0;
+                    System.out.println("£1.00 coin deposited in refund tray.");
+                } else if (changeDue >= 0.5 && !stored50pCoins.isEmpty()) {
+                    returnBucket.add(stored50pCoins.getFirst());
+                    changeDue = changeDue - 0.5;
+                    System.out.println("£0.50 coin deposited in refund tray.");
+                } else if (changeDue >= 0.2 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 0.2;
+                    System.out.println("£0.20 coin deposited in refund tray.");
+                } else if (changeDue >= 0.1 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 0.1;
+                    System.out.println("£0.10 coin deposited in refund tray.");
+                } else if (changeDue >= 0.05 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 0.05;
+                    System.out.println("£0.05 coin deposited in refund tray.");
+                } else if (changeDue >= 0.02 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 0.02;
+                    System.out.println("£0.02 coin deposited in refund tray.");
+                } else if (changeDue >= 0.01 && !stored100pCoins.isEmpty()) {
+                    returnBucket.add(stored100pCoins.getFirst());
+                    changeDue = changeDue - 0.01;
+                    System.out.println("£0.01 coin deposited in refund tray.");
+                }
             }
         }
 
-
-
+        // if item found, there is enough quantity and the user has enough money
         if (itemFound) {
             if (itemQuantity > 0) {
-                if (getCurrentBalance() >= itemPrice) {
+                if (getCurrentBalanceNumber() >= itemPrice) {
+
+                    //Validation message
                     System.out.println("Processing order...");
+
+                    //Loading
                     LoadingBuffer.loading();
-                    //Deposit coins in current balance in coin storage
+
+                    //Deposit coins in current balance to  coin storage
                     for (Coin coin: currentBalance) {
                         if(coin.getValue() == 0.01){
                             stored1pCoins.add(new Coin1p());
@@ -130,113 +134,66 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
                         }
                     }
 
-
-                    //Print refund  and update current balance array
-                    System.out.println("£" + (getCurrentBalance() - itemPrice) + " deposited in total in refund tray.");
+                    // Update current balance array
                     currentBalance.clear();
-                    //Update stored amount
-                    //setTotalStoredMoney(getTotalStoredMoney() + itemPrice);
-                    //Update change in quantity
-                    updateItemQuantity(items, codeInput, itemQuantity - 1);
-                    //Item in tray
+
+                    // Item deposited message
+                    System.out.println(itemName + " has been deposited in the collection tray.");
                     setItemInTray(true);
                     setItemInTrayName(itemName);
 
+                    //Update stored amount after current balance intake and refund considerations
+                    setTotalStoredMoney();
+                    //Update change in quantity of item
+                    updateItemQuantity(items, codeInput, itemQuantity - 1);
+
                 } else {
-                    throw new InsufficientFundsException("Please insert an additional £ " + (itemPrice - getCurrentBalance()) + " to buy a " + itemName + ".");
-
-
+                    throw new InsufficientFundsException("Please insert an additional £ " + (itemPrice - getCurrentBalanceNumber()) + " to buy a " + itemName + ".");
                 }
             } else {
                 throw new NotInStockException(itemName + " is out of stock, please choose another item.");
-
             }
         }
         else {
-            // itemFound remains false
+            // Occurs if itemFound remains false (could be an exception)
             System.out.println("Item code not found.");
         }
-
     }
 
+    //Used in purchaseItem() to updateItemQuantity after purchase
     @Override
-    public void updateItemQuantity(ArrayList<VendingMachineItem> items, String itemCode, int newQuantity) {
-        for (VendingMachineItem item : items) {
+    public void updateItemQuantity(ArrayList<Item> items, String itemCode, int newQuantity) {
+        for (Item item : items) {
             if (Objects.equals(item.getCode(), itemCode)) {
                 item.setQuantity(newQuantity);
-
             }
         }
     }
 
     @Override
     public void refundBalance() {
+
         //Loading
         LoadingBuffer.loading();
 
-        double changeDue = getCurrentBalance();
+        //Set refund bucket state
+        setReturnBucket(getCurrentBalance());
 
-        while (changeDue > 0) {
+        //Confirmation message
+        System.out.println(getCurrentBalanceNumber() + " has been deposited in refund tray.");
 
-            if (changeDue >= 2.0 && !stored200pCoins.isEmpty()) {
-                returnBucket.add(stored200pCoins.getFirst());
-                changeDue = changeDue - 2.0;
-                System.out.println("£2.00 coin deposited in refund tray.");
-            } else if (changeDue >= 1.0 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 1.0;
-                System.out.println("£1.00 coin deposited in refund tray.");
-            } else if (changeDue >= 0.5 && !stored50pCoins.isEmpty()) {
-                returnBucket.add(stored50pCoins.getFirst());
-                changeDue = changeDue - 0.5;
-                System.out.println("£0.50 coin deposited in refund tray.");
-            } else if (changeDue >= 0.2 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.2;
-                System.out.println("£0.20 coin deposited in refund tray.");
-            } else if (changeDue >= 0.1 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.1;
-                System.out.println("£0.10 coin deposited in refund tray.");
-            } else if (changeDue >= 0.05 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.05;
-                System.out.println("£0.05 coin deposited in refund tray.");
-            } else if (changeDue >= 0.02 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.02;
-                System.out.println("£0.02 coin deposited in refund tray.");
-            } else if (changeDue >= 0.01 && !stored100pCoins.isEmpty()) {
-                returnBucket.add(stored100pCoins.getFirst());
-                changeDue = changeDue - 0.01;
-                System.out.println("£0.01 coin deposited in refund tray.");
-            }
-            //Print refund total
-            System.out.println("A total balance of £" + getCurrentBalance() + " has been refunded.");
-            //Clear current balance
-            currentBalance.clear();
-
+        //Clear current balance array
+        setCurrentBalance(new ArrayList<>());
 
         }
-    }
 
     @Override
-    public void coinInput() {
+    public void depositCoin(String coinInput) {
 
         boolean coinInputComplete = false;
         while (!coinInputComplete) {
 
-            //Loading
-            LoadingBuffer.loading();
-
-            //Print out list of accepted coins
-            printAcceptedCoins();
-
-            //Receive input
-            Scanner readerInsertCoin = new Scanner(System.in);
-            String coinInput = readerInsertCoin.nextLine();
-
-            //Validate input and show balance
+            // isValidCoin() method returns boolean
             if (isValidCoin(coinInput)) {
 
                 //Loading and print validation message
@@ -244,7 +201,6 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
                 System.out.println("Coin accepted.");
 
                 //Initialise coin and add to current balance
-
                 switch (coinInput) {
 
                     case "0.01":
@@ -283,13 +239,15 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
                 }
 
                 //Print current balance
-                System.out.println("Current balance: £" + getCurrentBalance());
+                System.out.println("Current balance: £" + getCurrentBalanceNumber() + ".");
+                coinInputComplete = true;
 
 
-
+              // when input is 'done' return to main menu
             } else if (coinInput.equalsIgnoreCase("done")) {
                 coinInputComplete = true;
 
+                // could be an exception here
             } else {
                 LoadingBuffer.loading();
                 System.out.println("Unrecognised coin. Coin returned.");
@@ -301,6 +259,7 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
     @Override
     public void printMenu() {
         System.out.println("Welcome, please choose one of the following options (type number):");
+        //Iterate through enum to print menu
         for (var instruction : CustomerMainMenu.values()) {
             System.out.println(instruction.getInstruction());
         }
@@ -308,6 +267,7 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
 
     @Override
     public void printAcceptedCoins() {
+        //Iterate through enum to print accepted coins
         System.out.println("Please insert one of the following coins e.g. '2.00' (type 'done' to return to the main menu) :");
         for (var coin : AcceptedCoins.values()) {
             System.out.println(coin.getCoin());
@@ -316,19 +276,13 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
 
     @Override
     public boolean isValidCoin(String coinInput) {
+        //Iterate through enum and return true if input coin in list
         for (AcceptedCoins coin : AcceptedCoins.values()) {
             if (coin.getCoin().equals(coinInput)) {
                 return true;
             }
         }
         return false;
-    }
-
-    @Override
-    public void insertCoin(String coin) {
-        //this.currentBalance = this.currentBalance + Long.parseLong(coin);
-        System.out.println("Current balance: " + getCurrentBalance());
-
     }
 
     @Override
@@ -358,10 +312,6 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
         }
     }
 
-    @Override
-    public void setTotalStoredMoney() {
-
-    }
 }
 
 

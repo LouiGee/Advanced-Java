@@ -1,7 +1,7 @@
 package VendingMachine;
 
 import Coins.Coin;
-import Item.VendingMachineItem;
+import Item.Item;
 
 import java.util.ArrayList;
 
@@ -31,9 +31,9 @@ public interface VendingMachineAPI {
 
     void setItemInTray(boolean itemInTray);
 
-    ArrayList<VendingMachineItem> getItems();
+    ArrayList<Item> getItems();
 
-    void setItems(ArrayList<VendingMachineItem> items);
+    void setItems(ArrayList<Item> items);
 
     String getItemInTrayName();
 
