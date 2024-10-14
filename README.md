@@ -19,13 +19,13 @@ A2 (50%): deadline on Wednesday in Week 11 (KV 18)
 
 ## Target hours revision 
 **Target**: 150 \
-**Current**: 52\
+**Current**: 53\
 **Hours per day needed**: ?
 
 ## 14/10/2024
-Remove 2ps
-clarify £ ON INPUT 
-Restock exisiting item functionality
+Remove 2ps x 
+clarify £ ON INPUT x
+use long for price as double is imprecise x
 Thorough test cases
-use long for price as double is imprecise
+Restock exisiting item functionality
 dispense actual coins 
