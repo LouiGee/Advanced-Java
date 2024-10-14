@@ -2,7 +2,8 @@ package CustomerState;
 import Coins.*;
 import Exceptions.InsufficientChangeException;
 import Exceptions.InsufficientFundsException;
-import Exceptions.NotInStockException;
+import Exceptions.ItemNotFoundException;
+import Exceptions.ItemOutOfStockException;
 import Item.Item;
 import LoadingMessage.LoadingBuffer;
 import VendingMachine.VendingMachine;
@@ -18,7 +19,7 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
     }
 
     @Override
-    public void purchaseItem( String codeInput) throws NotInStockException, InsufficientFundsException, InsufficientChangeException {
+    public void purchaseItem( String codeInput) throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException, ItemOutOfStockException {
 
         //Loading
         LoadingBuffer.loading();
@@ -151,12 +152,12 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
                     throw new InsufficientFundsException("Please insert an additional £ " + (itemPrice - getCurrentBalanceNumber()) + " to buy a " + itemName + ".");
                 }
             } else {
-                throw new NotInStockException(itemName + " is out of stock, please choose another item.");
+                throw new ItemOutOfStockException(itemName + " is out of stock, please choose another item.");
             }
         }
         else {
-            // Occurs if itemFound remains false (could be an exception)
-            System.out.println("Item code not found.");
+            // Occurs if itemFound remains false
+            throw new ItemNotFoundException("The item code you have entered does not exist in the machine.");
         }
     }
 
@@ -191,6 +192,7 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
     public void depositCoin(String coinInput) {
 
         boolean coinInputComplete = false;
+
         while (!coinInputComplete) {
 
             // isValidCoin() method returns boolean
@@ -291,7 +293,7 @@ public class CustomerState extends VendingMachine implements CustomerStateAPI {
         LoadingBuffer.loading();
         // Validate action
         if (getReturnBucket() > 0) {
-            System.out.println("£" + getReturnBucket() + " collected.");
+            System.out.println("£" + getReturnBucket() + " collected from the refund tray.");
             returnBucket.clear();
         } else {
             System.out.println("The refund bucket is empty.");

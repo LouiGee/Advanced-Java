@@ -111,7 +111,7 @@ public class Interaction {
 
                             try {
                                 CustomerState.purchaseItem(itemPurchaseCodeInput);
-                            } catch (InsufficientChangeException | NotInStockException | InsufficientFundsException e) {System.err.println(e.getMessage());}
+                            } catch (InsufficientChangeException | ItemNotFoundException | InsufficientFundsException | ItemOutOfStockException e) {System.err.println(e.getMessage());}
                             break;
 
                         case "5":
@@ -221,7 +221,11 @@ public class Interaction {
                             System.out.println("Enter item code: ");
                             String removeItemCodeInput = readerRemoveItem.nextLine();
 
-                            AdminState.removeItem(removeItemCodeInput);
+                            try {
+                                AdminState.removeItem(removeItemCodeInput);
+                            }  catch (ItemNotFoundException e) { throw new RuntimeException(e);}
+
+                            ;
                             break;
 
                         case "6":
@@ -241,13 +245,11 @@ public class Interaction {
 
                     }
 
-
                 }
-
 
             }
             else if (user.equalsIgnoreCase("exit")) {
-                //Exit lopp
+                //Exit loop
                 exit = true;
                 //Goodbye message
                 LoadingBuffer.loading();

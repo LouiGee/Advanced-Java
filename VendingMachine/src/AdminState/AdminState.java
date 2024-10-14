@@ -1,8 +1,6 @@
 package AdminState;
 import Coins.*;
-import Exceptions.CapacityFullException;
-import Exceptions.DuplicateEntryException;
-import Exceptions.InvalidInputException;
+import Exceptions.*;
 import LoadingMessage.LoadingBuffer;
 import VendingMachine.VendingMachine;
 import Item.Item;
@@ -33,7 +31,7 @@ public class AdminState extends VendingMachine implements AdminStateAPI {
                     break;
                 }
             }
-            // Throw error if code or name already takern
+            // Throw error if code or name already takeen
             if(duplicate) {
                 setDuplicate(false);
                 throw new DuplicateEntryException("Either code or name is already taken.");
@@ -46,20 +44,34 @@ public class AdminState extends VendingMachine implements AdminStateAPI {
     }}
 
     @Override
-    public void removeItem(String codeInput) {
+    public void removeItem(String codeInput) throws ItemNotFoundException {
+
+        //Assign variable to determine if valid input
+        boolean validInput = false;
 
         //Loading
         LoadingBuffer.loading();
 
-        // Validate array is not empty already
-        if (!items.isEmpty()) {
+        // Validate requested item is in item array
+        for (Item item : getItems()) {
+            if (Objects.equals(codeInput, item.getCode())) {
+                validInput = true;
+                break;
+            }
+        }
+
+        // if validInput is true
+        if (validInput) {
 
             //Remove item
-            items.removeIf(item -> Objects.equals(codeInput, item.getCode()));
+            getItems().removeIf(item -> Objects.equals(codeInput, item.getCode()));
 
             //Print validation
             System.out.println("Item removed.");
-        } else {System.out.println("There are no items in the vending machine to remove.");}
+
+            //If no items in the vending machine - could be an exception
+
+        } else { throw new ItemNotFoundException("The item code you have entered does not exist in the machine.");}
     }
 
     @Override

@@ -3,8 +3,8 @@ package Tests;
 import CustomerState.CustomerState;
 import Exceptions.InsufficientChangeException;
 import Exceptions.InsufficientFundsException;
-import Exceptions.NotInStockException;
-import VendingMachine.VendingMachine;
+import Exceptions.ItemNotFoundException;
+import Exceptions.ItemOutOfStockException;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -53,7 +53,7 @@ public class CustomerTests {
 
    //Test5
    @Test
-   public void testPurchaseItem() throws NotInStockException, InsufficientFundsException, InsufficientChangeException {
+   public void testPurchaseItem() throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException, ItemOutOfStockException {
       System.out.println("\n\nTest5 (Customer) Customer purchases item code '03', change is then refunded.");
       vmCustomer.initialiseCoins();
       vmCustomer.setTotalStoredMoney();
@@ -83,13 +83,13 @@ public class CustomerTests {
 
    //Test8
    @Test
-   public void testPurchaseItemNotInStock() throws NotInStockException, InsufficientFundsException, InsufficientChangeException {
+   public void testPurchaseItemNotInStock() throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException {
       System.out.println("\n\nTest8 (Customer) Customer deposits '1.00' and purchases item code '02', however item is out of stock.");
       //Deposit £1
       vmCustomer.depositCoin("1.00");
       //Refund bucket state before
       Exception exception = assertThrows(
-              NotInStockException.class,
+              ItemOutOfStockException.class,
               () -> vmCustomer.purchaseItem("02"));
 
       Assertions.assertEquals("Coke 330ml is out of stock, please choose another item.", exception.getMessage());
@@ -101,8 +101,26 @@ public class CustomerTests {
 
    //Test9
    @Test
-   public void testPurchaseItemInsufficientChange() throws NotInStockException, InsufficientFundsException, InsufficientChangeException {
-      System.out.println("\n\nTest9 (Customer) Customer deposits '2.00' and purchases item code '02' however there is not enough change.");
+   public void testPurchaseItemItemNotFound() throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException {
+      System.out.println("\n\nTest9 (Customer) Customer deposits '1.00' and purchases invalid item code '08'.");
+      //Deposit £1
+      vmCustomer.depositCoin("1.00");
+      //Refund bucket state before
+      Exception exception = assertThrows(
+              ItemNotFoundException.class,
+              () -> vmCustomer.purchaseItem("08"));
+
+      Assertions.assertEquals("The item code you have entered does not exist in the machine.", exception.getMessage());
+      System.out.println(" ItemNotFound exception thrown.");
+      vmCustomer.refundBalance();
+      System.out.println("Test passed.");
+
+   }
+
+   //Test10
+   @Test
+   public void testPurchaseItemInsufficientChange() throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException {
+      System.out.println("\n\nTest10 (Customer) Customer deposits '2.00' and purchases item code '02' however there is not enough change.");
       //Empty change from machine and recalculate amount in machine
       vmCustomer.setStored1pCoins(new ArrayList<>());
       vmCustomer.setStored2pCoins(new ArrayList<>());
@@ -133,9 +151,12 @@ public class CustomerTests {
       System.out.println("Test passed.");
    }
 
+
+
+   //Test 11
    @Test
    public void testAnyTimeRefund() {
-      System.out.println("\n\nTest10 (Customer) Customer request refund midway through transaction.");
+      System.out.println("\n\nTest11 (Customer) Customer request refund midway through transaction.");
       System.out.println("Amount in refund bucket: £" + vmCustomer.getReturnBucket());
       vmCustomer.depositCoin("2.00");
       vmCustomer.refundBalance();

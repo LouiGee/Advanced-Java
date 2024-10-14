@@ -6,6 +6,7 @@ import AdminState.AdminState;
 import Exceptions.CapacityFullException;
 import Exceptions.DuplicateEntryException;
 import Exceptions.InvalidInputException;
+import Exceptions.ItemNotFoundException;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -114,7 +115,7 @@ public class AdminTests {
 
     //Test 9
     @Test
-    public void testRemoveItem() {
+    public void testRemoveItem() throws ItemNotFoundException {
         System.out.println("\n\nTest 9 (Admin). Remove a item with code 01.");
         vmAdmin.viewInventory();
         vmAdmin.removeItem("01");
@@ -125,18 +126,17 @@ public class AdminTests {
 
     //Test 10
     @Test
-    public void testReturnToLogin() {
-        System.out.println("\n\nTest 10 (Admin). Return to the login page.");
-        vmAdmin.removeItem("01");
-        System.out.println("Test complete.");
+    public void testRemoveItemNoItemsToRemove() throws ItemNotFoundException {
+        System.out.println("\n\nTest 10 (Admin). Attempt to remove a item with code '01' when no items are stocked.");
+        vmAdmin.viewInventory();
+        Exception exception = assertThrows(
+                ItemNotFoundException.class,
+                () -> vmAdmin.removeItem("01")
+        );
+        Assertions.assertEquals("The item code you have entered does not exist in the machine.", exception.getMessage());
+        System.out.println("NotInStockException thrown.");
+        System.out.println("Test passed.");
 
     }
-
-
-
-
-
-
-
 
 }

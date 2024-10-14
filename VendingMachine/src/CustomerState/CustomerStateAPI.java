@@ -4,7 +4,8 @@ package CustomerState;
 
 import Exceptions.InsufficientChangeException;
 import Exceptions.InsufficientFundsException;
-import Exceptions.NotInStockException;
+import Exceptions.ItemNotFoundException;
+import Exceptions.ItemOutOfStockException;
 import Item.Item;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public interface CustomerStateAPI {
     boolean isValidCoin (String coinInput);
 
     //Handles purchases
-    void purchaseItem(String codeInput) throws NotInStockException, InsufficientFundsException, InsufficientChangeException;
+    void purchaseItem(String codeInput) throws ItemNotFoundException, InsufficientFundsException, InsufficientChangeException, ItemOutOfStockException;
 
     //Will refund balance at any point
     void refundBalance();

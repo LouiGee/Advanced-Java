@@ -4,15 +4,7 @@ import Tests.CustomerTests;
 import Tests.LoginTests;
 
 public class Main {
-    public static void main(String[] args) throws InvalidInputException, CapacityFullException, DuplicateEntryException, NotInStockException, InsufficientFundsException, InsufficientChangeException {
-
-        /*
-        Interaction vminteraction = new Interaction();
-
-        vminteraction.start();
-
-         */
-
+    public static void main(String[] args) throws InvalidInputException, CapacityFullException, DuplicateEntryException, ItemNotFoundException, InsufficientFundsException, InsufficientChangeException, ItemOutOfStockException {
 
         //Login Tests
         LoginTests loginTests = new LoginTests();
@@ -50,6 +42,8 @@ public class Main {
         adminTests.testAddItemCapacityFull();
         //Test9
         adminTests.testRemoveItem();
+        //Test10
+        adminTests.testRemoveItemNoItemsToRemove();
 
         //Customer Tests
 
@@ -72,11 +66,11 @@ public class Main {
         //Test8
         customerTests.testPurchaseItemNotInStock();
         //Test9
-        customerTests.testPurchaseItemInsufficientChange();
+        customerTests.testPurchaseItemItemNotFound();
         //Test10
+        customerTests.testPurchaseItemInsufficientChange();
+        //Test11
         customerTests.testAnyTimeRefund();
-        
-
         }
     }
 

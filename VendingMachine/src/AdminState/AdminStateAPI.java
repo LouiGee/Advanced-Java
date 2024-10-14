@@ -1,10 +1,6 @@
 package AdminState;
 
-import Exceptions.CapacityFullException;
-import Exceptions.DuplicateEntryException;
-import Exceptions.InvalidInputException;
-
-import java.util.InputMismatchException;
+import Exceptions.*;
 
 public interface AdminStateAPI {
 
@@ -16,7 +12,7 @@ public interface AdminStateAPI {
 
     public void printMenu();
 
-    public void removeItem(String codeInput);
+    public void removeItem(String codeInput) throws ItemNotFoundException;
 
 
 
