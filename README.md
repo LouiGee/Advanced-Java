@@ -27,5 +27,5 @@ Remove 2ps x
 clarify £ ON INPUT x
 use long for price as double is imprecise x
 Thorough test cases
-Restock exisiting item functionality
-dispense actual coins 
+Restock exisiting item functionality x
+dispense actual coins x
